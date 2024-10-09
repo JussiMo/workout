@@ -1,20 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Home from './screens/Home';
+import Workout from './screens/Workout';
+import List from './screens/List';
+import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
-export default function App() {
+/*
+TODO: 
+SETTINGS NAPPULA NAVIGAATIOON
+KILOMETRIT MAILEIKSI JA PÄINVASTOIN
+*/
+const Tab = createBottomTabNavigator();
+
+const App = () => {
+  const screenOptions = ({ route }) => ({
+    tabBarIcon: ({ color, size }) => {
+      let iconName;
+      if (route.name === 'Home') {
+        iconName = 'home';
+      } else if (route.name === 'Workout') {
+        iconName = 'dumbbell';
+      } else if (route.name === 'List of workouts') {
+        iconName = 'format-list-bulleted';
+      }
+      return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+    },
+    tabBarActiveTintColor: '#FEFF9F',
+    tabBarInactiveTintColor: '#55570e',
+    tabBarStyle: { height: 80, backgroundColor: '#72BF78', paddingBottom: 5 },
+    tabBarLabelStyle: { fontSize: 16, color: 'white' },
+  });
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={screenOptions}>
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Workout" component={Workout} />
+        <Tab.Screen name="List of workouts" component={List} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
