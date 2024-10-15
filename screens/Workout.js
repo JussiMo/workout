@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { View, Alert, FlatList, TouchableOpacity } from 'react-native';
-import { TextInput, Button, Text, Switch, useTheme } from 'react-native-paper';
+import { TextInput, Button, Text, useTheme } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from '../style/style';
 
 const Workout = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  
+  const isKm = route.params?.isKm ?? true;
+  const setIsKm = route.params?.setIsKm || (() => {});
+  
   const { colors } = useTheme();
   const [selectedWorkoutId, setSelectedWorkoutId] = useState(null);
   const [distance, setDistance] = useState('');
   const [timeTaken, setTimeTaken] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isKm, setIsKm] = useState(true);
 
   const workouts = [
     { id: '1', name: 'Run', icon: 'run' },
@@ -22,11 +26,9 @@ const Workout = () => {
     { id: '3', name: 'Swim', icon: 'swim' },
   ];
 
-  // Lähettää tiedot listalle
   const handleSubmit = () => {
     const selectedWorkout = workouts.find(workout => workout.id === selectedWorkoutId);
 
-    // tarkistaa onko kaikki kentät täytetty
     if (!selectedWorkout || !distance || !timeTaken) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
@@ -39,26 +41,20 @@ const Workout = () => {
       date: date.toLocaleDateString(),
     };
 
-    // Lähettää käyttäjän syöttämät tiedot listalle
     navigation.navigate('List of workouts', { newWorkout: workoutDetails });
 
-    // Resettaa inputit lähetyksen jälkeen
-    setSelectedWorkoutId(null);  
+    setSelectedWorkoutId(null);
     setDistance('');
     setTimeTaken('');
     setDate(new Date());
     setShowDatePicker(false);
-    setIsKm(true);
   };
 
-  // Tuo workout valinnat näkyviin
   const renderWorkoutItem = ({ item }) => (
     <TouchableOpacity
       style={[
         styles.workoutButton,
-        {
-          backgroundColor: selectedWorkoutId === item.id ? colors.primary : colors.surface,
-        },
+        { backgroundColor: selectedWorkoutId === item.id ? colors.primary : colors.surface },
       ]}
       onPress={() => setSelectedWorkoutId(item.id)}
     >
@@ -79,12 +75,6 @@ const Workout = () => {
         horizontal
         contentContainerStyle={styles.workoutList}
       />
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchText}>Miles</Text>
-        <Switch value={isKm} onValueChange={() => setIsKm(previousState => !previousState)} />
-        <Text style={styles.switchText}>Kilometers</Text>
-      </View>
 
       <TextInput
         label={`Distance (${isKm ? 'km' : 'miles'})`}
