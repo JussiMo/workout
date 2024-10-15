@@ -7,11 +7,6 @@ import List from './screens/List';
 import Settings from './screens/Settings';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
-/*
-TODO: 
-SETTINGS NAPPULA NAVIGAATIOON
-KILOMETRIT MAILEIKSI JA PÄINVASTOIN
-*/
 const Tab = createBottomTabNavigator();
 
 const App = () => {

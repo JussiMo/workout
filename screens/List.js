@@ -4,87 +4,87 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import styles from '../style/style';
 
 const List = ({ route }) => {
-  // Ottaa workout tiedot vastaan
-  const { newWorkout } = route.params || { newWorkout: null };
+  const isKm = route?.params?.isKm ?? true;
 
-  // Array jossa kaikki workoutit
   const [workoutHistory, setWorkoutHistory] = useState([]);
 
-  // Eritellyt workoutit
   const [runWorkouts, setRunWorkouts] = useState([]);
   const [bikeWorkouts, setBikeWorkouts] = useState([]);
   const [swimWorkouts, setSwimWorkouts] = useState([]);
 
-  // Jos ottaa vastaan uuden workoutin, lisää sen historyyn
+  const { newWorkout } = route.params || { newWorkout: null };
+
+  //Uusi workout lisätään historiaan ja kategorisoidaan
   useEffect(() => {
     if (newWorkout) {
-      setWorkoutHistory(prevHistory => [...prevHistory, newWorkout]);
-      categorizeWorkout(newWorkout); // kutsuu kans tämän funktion
+      setWorkoutHistory((prevHistory) => [...prevHistory, newWorkout]);
+      categorizeWorkout(newWorkout);
     }
   }, [newWorkout]);
 
-  // tämän kutsuu edellinen efekti
+  // Kategorisoidaan workout tyypin mukaan
   const categorizeWorkout = (workout) => {
     const { name, distance } = workout;
 
-    // varmistaa että distance on numero
-    const distanceValue = parseFloat(distance);
-
     if (name === 'Run') {
-      setRunWorkouts(prev => [...prev, distanceValue]);
+      setRunWorkouts((prev) => [...prev, distance]);
     } else if (name === 'Cycle') {
-      setBikeWorkouts(prev => [...prev, distanceValue]);
+      setBikeWorkouts((prev) => [...prev, distance]);
     } else if (name === 'Swim') {
-      setSwimWorkouts(prev => [...prev, distanceValue]);
+      setSwimWorkouts((prev) => [...prev, distance]);
     }
   };
 
-  // ikonit workouteille
+  // Ikonit eri tyypeille
   const workoutIcons = {
     Run: 'run',
     Cycle: 'bike',
     Swim: 'swim',
   };
 
-  // tekkee workoutit näkyviin
+  // Workouttien renderöinti
   const renderWorkoutItem = ({ item }) => (
     <View style={styles.workoutBox}>
       <View style={styles.iconContainer}>
         <MaterialCommunityIcons name={workoutIcons[item.name]} size={30} color="#72BF78" />
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.workoutDetail}>Distance: {item.distance}</Text>
+        <Text style={styles.workoutDetail}>
+          Distance: {isKm ? item.distance : (item.distance * 0.621371).toFixed(2)} {isKm ? 'km' : 'miles'}
+        </Text>
         <Text style={styles.workoutDetail}>Time: {item.time} mins</Text>
         <Text style={styles.workoutDetail}>Date: {item.date}</Text>
       </View>
     </View>
   );
 
-  // laskee kokosummat eri workouteille
+  // Lasketaan yhteismatkat eri workouteille
   const runSum = runWorkouts.reduce((acc, curr) => acc + curr, 0);
   const bikeSum = bikeWorkouts.reduce((acc, curr) => acc + curr, 0);
   const swimSum = swimWorkouts.reduce((acc, curr) => acc + curr, 0);
 
+  // Matkan muuntaminen kilometreiksi tai maileiksi
+  const totalDistance = (sum) => (isKm ? sum : (sum * 0.621371).toFixed(2));
+
   return (
+
+    // Ensiksi yhteenveto
     <View style={styles.container}>
-      
-      {/* Kokonaismäärät */}
       <View style={styles.summaryContainer}>
         <View style={styles.iconBox}>
           <MaterialCommunityIcons name={workoutIcons.Run} size={30} color="#72BF78" />
-          <Text style={styles.iconText}>{runSum}</Text>
+          <Text style={styles.iconText}>{totalDistance(runSum)} {isKm ? 'km' : 'm'}</Text>
         </View>
         <View style={styles.iconBox}>
           <MaterialCommunityIcons name={workoutIcons.Cycle} size={30} color="#72BF78" />
-          <Text style={styles.iconText}>{bikeSum}</Text>
+          <Text style={styles.iconText}>{totalDistance(bikeSum)} {isKm ? 'km' : 'm'}</Text>
         </View>
         <View style={styles.iconBox}>
           <MaterialCommunityIcons name={workoutIcons.Swim} size={30} color="#72BF78" />
-          <Text style={styles.iconText}>{swimSum}</Text>
+          <Text style={styles.iconText}>{totalDistance(swimSum)} {isKm ? 'km' : 'm'}</Text>
         </View>
       </View>
-
-      {/* listaa workoutit sitä mukaa kun niitä tekee */}
+      {/* Sitten itse workoutit */}
       <FlatList
         data={workoutHistory}
         renderItem={renderWorkoutItem}

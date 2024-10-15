@@ -42,7 +42,7 @@ export default StyleSheet.create({
   dateButton: {
     width: '80%',
     padding: 15,
-    backgroundColor: '#72BF78',
+    backgroundColor: '#07b807',
     borderRadius: 8,
     alignItems: 'center',
     marginVertical: 10,
@@ -66,7 +66,7 @@ export default StyleSheet.create({
     padding: 16,
     marginBottom: 15,
     width: 250,
-   },
+  },
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -95,18 +95,16 @@ export default StyleSheet.create({
     marginTop: 5,
     fontSize: 16,
   },
-  switchContainer: {  
+  switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 20,
     width: '100%',
-    marginTop: '50%',
   },
   buttonContainer: {
     width: '50%',
     marginTop: 20,
-    marginLeft: '25%',
     justifyContent: 'center',
   },
 });

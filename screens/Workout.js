@@ -9,10 +9,10 @@ import styles from '../style/style';
 const Workout = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  
+
   const isKm = route.params?.isKm ?? true;
-  const setIsKm = route.params?.setIsKm || (() => {});
-  
+  const setIsKm = route.params?.setIsKm || (() => { });
+
   const { colors } = useTheme();
   const [selectedWorkoutId, setSelectedWorkoutId] = useState(null);
   const [distance, setDistance] = useState('');
@@ -20,12 +20,14 @@ const Workout = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  // Eri workoutit
   const workouts = [
     { id: '1', name: 'Run', icon: 'run' },
     { id: '2', name: 'Cycle', icon: 'bike' },
     { id: '3', name: 'Swim', icon: 'swim' },
   ];
 
+  // Tästä lähtee uusi workout eteenpäin
   const handleSubmit = () => {
     const selectedWorkout = workouts.find(workout => workout.id === selectedWorkoutId);
 
@@ -34,15 +36,19 @@ const Workout = () => {
       return;
     }
 
+    // Mitä uusi workout sisältää
     const workoutDetails = {
       name: selectedWorkout.name,
-      distance: isKm ? `${distance} km` : `${distance} miles`,
+      distance: parseFloat(distance),
       time: timeTaken,
       date: date.toLocaleDateString(),
     };
 
+    // Käytetään navigationia puskemaan uuden workoutin listalle ja käyttäjän listanäkymään
     navigation.navigate('List of workouts', { newWorkout: workoutDetails });
+    // voisi laittaa tähän alle navigation.navigate('Workout') jos ei halua että siirtyy listanäkymään
 
+    // Tyhjennetään kentät lähetyksen jälkeen
     setSelectedWorkoutId(null);
     setDistance('');
     setTimeTaken('');
@@ -50,6 +56,7 @@ const Workout = () => {
     setShowDatePicker(false);
   };
 
+  // Workout valinnat
   const renderWorkoutItem = ({ item }) => (
     <TouchableOpacity
       style={[
